@@ -7,13 +7,22 @@ const generateToken = (id) =>
 
 exports.register = async (req, res) => {
   try {
-    if (!db) throw new Error("Firebase is not initialized");
+    console.log("📝 Registration request:", req.body.email);
+    if (!db) {
+        console.error("❌ Firebase DB is null!");
+        throw new Error("Firebase is not initialized");
+    }
     const { name, email, password, phone, role } = req.body;
     const usersRef = db.collection("users");
+    console.log("🔍 Checking for existing user...");
     const snapshot = await usersRef.where("email", "==", email).get();
     
-    if (!snapshot.empty) return res.status(400).json({ message: "User already exists" });
+    if (!snapshot.empty) {
+        console.log("⚠️ User already exists:", email);
+        return res.status(400).json({ message: "User already exists" });
+    }
 
+    console.log("🔐 Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = {
       name,
@@ -24,7 +33,9 @@ exports.register = async (req, res) => {
       createdAt: new Date().toISOString()
     };
 
+    console.log("📤 Adding to Firestore...");
     const docRef = await usersRef.add(newUser);
+    console.log("✅ User created with ID:", docRef.id);
 
     res.status(201).json({
       _id: docRef.id,
