@@ -14,6 +14,7 @@
     "express": "^4.19.2",
     "firebase-admin": "^13.8.0",
     "jsonwebtoken": "^9.0.2",
+    "serverless-http": "^4.0.0",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
