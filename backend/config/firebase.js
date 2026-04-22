@@ -34,11 +34,15 @@ if (!admin.apps.length) {
         initialized = true;
         console.log("✅ Firebase Admin Connected (via file)");
       } else {
-        console.error("❌ Firebase: No credentials found in ENV or file.");
+        console.error("❌ Firebase: No credentials found.");
+        console.log("ℹ️ Expected ENV vars: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY");
+        if (!process.env.FIREBASE_PROJECT_ID) console.log("⚠️ Missing: FIREBASE_PROJECT_ID");
+        if (!process.env.FIREBASE_CLIENT_EMAIL) console.log("⚠️ Missing: FIREBASE_CLIENT_EMAIL");
+        if (!process.env.FIREBASE_PRIVATE_KEY) console.log("⚠️ Missing: FIREBASE_PRIVATE_KEY");
       }
     }
   } catch (err) {
-    console.error("❌ Firebase init error:", err.message);
+    console.error("❌ Firebase init error:", err.stack || err.message);
   }
 } else {
   initialized = true;
