@@ -130,3 +130,33 @@ exports.getCourierParcels = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.getUnassignedParcels = async (req, res) => {
+  try {
+    const snapshot = await db.collection("parcels").where("status", "==", "pending").get();
+    const parcels = snapshot.docs
+      .map(doc => ({ _id: doc.id, ...doc.data() }))
+      .filter(p => !p.assignedCourierId);
+    res.json(parcels);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.acceptParcel = async (req, res) => {
+  try {
+    const parcelRef = db.collection("parcels").doc(req.params.id);
+    const doc = await parcelRef.get();
+    if (!doc.exists) return res.status(404).json({ message: "Parcel not found" });
+    if (doc.data().assignedCourierId) return res.status(400).json({ message: "Already assigned" });
+
+    await parcelRef.update({
+      assignedCourierId: req.user._id,
+      assignedCourierName: req.user.name,
+      status: "picked"
+    });
+    res.json({ message: "Parcel accepted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

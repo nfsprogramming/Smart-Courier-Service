@@ -6,8 +6,12 @@ import toast from "react-hot-toast";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate("/dashboard");
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
