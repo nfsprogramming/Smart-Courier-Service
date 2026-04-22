@@ -15,4 +15,8 @@ app.use("/api/users", require("./routes/userRoutes"));
 app.get("/", (req, res) => res.send("🚚 Smart Courier API running..."));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
+}
+
+module.exports = app;
