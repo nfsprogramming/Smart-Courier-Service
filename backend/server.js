@@ -8,9 +8,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/parcels", require("./routes/parcelRoutes"));
-app.use("/api/users", require("./routes/userRoutes"));
+const authRoutes = require("./routes/authRoutes");
+const parcelRoutes = require("./routes/parcelRoutes");
+const userRoutes = require("./routes/userRoutes");
+
+// Mount routes to both /api and / for maximum compatibility (Vercel strips /api prefix)
+app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
+
+app.use("/api/parcels", parcelRoutes);
+app.use("/parcels", parcelRoutes);
+
+app.use("/api/users", userRoutes);
+app.use("/users", userRoutes);
 
 app.get("/", (req, res) => res.send("🚚 Smart Courier API running..."));
 
